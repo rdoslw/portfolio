@@ -1,0 +1,373 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Portfolio Imię Nazwisko</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+  /* Layout: nagłówek z imieniem i kontaktem, pod nim jedna kolumna prac; każda praca to pozioma karuzela z podpisem. */
+  :root {
+    --bg: #0b0c0e;
+    --surface: #121418;
+    --line: #23272d;
+    --fg: #e9eaec;
+    --muted: #8c9199;
+    --accent: #a9bdd6;
+    --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+  a { color: inherit; text-decoration-color: var(--line); text-underline-offset: 4px; transition: text-decoration-color .2s, color .2s; }
+  a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .wrap {
+    width: 100%;
+    max-width: 1160px;
+    margin-inline: auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Header */
+  .site-header { padding-block: 400px 200px; text-align: center; }
+  .head-stack { display: flex; flex-direction: column; align-items: center; gap: 32px; }
+  .name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.6rem, 6.5vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+    margin-bottom: 6;
+  }
+  .role { margin: 3px auto 0; color: var(--muted); font-size: 1rem; max-width: 46ch; }
+  .contact { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 56px; min-width: 0; }
+  .contact span {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .contact a { font-size: 1.05rem; overflow-wrap: anywhere; }
+
+  .down {
+    width: 44px; height: 44px; margin-top: 4px;
+    display: grid; place-items: center;
+    border: 1px solid var(--line); border-radius: 50%;
+    color: var(--muted);
+    transition: color .2s, border-color .2s;
+  }
+  .down:hover { color: var(--accent); border-color: var(--accent); }
+  .down svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  @media (prefers-reduced-motion: no-preference) { .down svg { animation: nudge 2.4s ease-in-out infinite; } }
+  @keyframes nudge { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+
+  /* Feed */
+  .feed { display: flex; flex-direction: column; gap: clamp(72px, 12vw, 128px); padding-block: clamp(40px, 7vw, 72px) 24px; }
+  .work { width: min(100%, var(--w, 560px)); margin-inline: auto; }
+
+  .viewport { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .track::-webkit-scrollbar { display: none; }
+  .slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    aspect-ratio: var(--ratio, 4 / 5);
+    position: relative;
+  }
+  .slide img, .slide video { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; user-select: none; }
+  .slide video { background: #000; }
+
+  /* Miejsce na grafikę, dopóki nie podmienisz pliku */
+  .ph {
+    width: 100%; height: 100%;
+    display: grid; place-content: center; gap: 6px; text-align: center;
+    padding: 16px;
+    color: var(--muted);
+    background:
+      repeating-linear-gradient(135deg, transparent 0 14px, rgba(255,255,255,0.025) 14px 15px),
+      var(--surface);
+  }
+  .ph b { font-family: var(--font-display); font-weight: 500; font-size: 0.95rem; color: var(--fg); letter-spacing: 0.02em; }
+  .ph small { font-size: 0.78rem; }
+
+  .arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(11,12,14,0.72);
+    color: var(--fg);
+    display: grid; place-items: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .2s, background .2s, border-color .2s;
+    backdrop-filter: blur(6px);
+  }
+  .arrow.prev { left: 12px; }
+  .arrow.next { right: 12px; }
+  .arrow svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .viewport:hover .arrow, .arrow:focus-visible { opacity: 1; }
+  .arrow:hover { border-color: var(--accent); }
+  .arrow[disabled] { opacity: 0 !important; pointer-events: none; }
+  @media (hover: none) { .arrow { display: none; } }
+
+  .ctrl { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 14px; min-height: 20px; }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+  .dot::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background .2s, transform .2s; }
+  .dot[aria-current="true"]::after { background: var(--accent); transform: scale(1.35); }
+  .count { font-variant-numeric: tabular-nums; font-size: 0.8rem; color: var(--muted); letter-spacing: 0.06em; }
+
+  .label {
+    margin: 12px 0 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+  .note { margin: 6px 0 0; color: var(--muted); font-size: 0.92rem; max-width: 52ch; }
+
+  /* Footer */
+  .site-footer { margin-top: clamp(56px, 9vw, 104px); border-top: 1px solid var(--line); padding-block: 40px 40px; }
+  .foot-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px 40px; color: var(--muted); font-size: 0.92rem; }
+  .foot-grid a { color: var(--fg); overflow-wrap: anywhere; }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 8px 28px; min-width: 0; }
+
+  @media (max-width: 640px) {
+    .site-header { padding-block: 56px 4px; }
+  }
+</style>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="head-stack">
+      <div>
+        <h1 class="name">RADOSŁAW</h1>
+        <h1 class="name">PIOTROWSKI</h1>
+        <p class="role">Projektowanie graficzne, edycja wideo</p>
+        <p class="role">Adobe Photoshop, Lightroom, Premiere Pro, Figma</p>
+      </div>
+      <ul class="contact">
+        <li><span>E-mail</span><a href="mailto:rdoslw@gmail.com">rdoslw@gmail.com</a></li>
+        <li><span>Telefon</span><a href="tel:+48784676044">+48 784 676 044</a></li>
+      </ul>
+      <a class="down" href="#feed" id="down" aria-label="Przejdź do prac">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="feed" id="feed"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <span>© 2026 Radosław Piotrowski</span>
+      <div class="foot-links">
+        <a href="mailto:rdoslw@gmail.com">rdoslw@gmail.com</a>
+        <a href="tel:+48784676044">+48 784 676 044</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /*
+    PRACE: edytuj tylko tę tablicę.
+    label  - podpis wielkimi literami pod pracą
+    note   - opcjonalny krótki opis (zostaw "" jeśli niepotrzebny)
+    ratio  - proporcje slajdu, np. "4 / 5", "1 / 1", "9 / 16"
+    width  - maksymalna szerokość pracy w px
+    slides - lista slajdów; wpisz src: "obrazy/plik.jpg" zamiast "" żeby podmienić placeholder
+             wideo: { video: "wideo/plik.mp4", poster: "img/okladka.jpg", alt: "Opis" }
+             placeholder wideo: { video: "", kind: "video", alt: "Opis" }
+  */
+  const WORKS = [
+    {
+      label: "Karuzela na Instagram dla SHOPER",
+      note: "(Projekt na studia) Pięć slajdów do postu nt. konsumpcjonizmu.",
+      ratio: "4 / 5", width: 540,
+      slides: [{ src: "img/karuzela shoper.png", alt: "Slajd 1" }, { src: "img/karuzela shoper 2.png", alt: "Slajd 2" }, { src: "img/karuzela shoper 3.png", alt: "Slajd 3" }, { src: "img/karuzela shoper 4.png", alt: "Slajd 4" }, { src: "img/karuzela shoper 5.png", alt: "Slajd 5" }]
+    },
+    {
+      label: "Identyfikacja wizualna marki LUCIA",
+      note: "(Projekt na studia) Logo, projekt puszki i przykłady reklam.",
+      ratio: "16 / 9", width: 820,
+      slides: [{ src: "img/lucia0.png", alt: "Logo" }, { src: "img/lucia1.png", alt: "Puszka" }, { src: "img/lucia2.png", alt: "Puszka" }, { src: "img/lucia3.png", alt: "Puszka" }, { src: "img/lucia4.png", alt: "Puszka" }, { src: "img/lucia5.png", alt: "Puszka" }, { src: "img/lucia6.png", alt: "Puszka" }, { src: "img/lucia7.png", alt: "Reklama" }, { src: "img/lucia8.png", alt: "Reklama" }]
+    },
+    {
+      label: "Materiały dla GRUPA HOFMAN",
+      note: "Wizytówka oraz ulotka.",
+      ratio: "3 / 4", width: 540,
+      slides: [{ src: "img/hofman1.png", alt: "Przód" }, { src: "img/hofman2.png", alt: "Tył" }, { src: "img/hofman3.png", alt: "Ulotka" }]
+    },
+    {
+      label: "Post na Facebooka dla X-wakacje",
+      note: "Post informacyjny.",
+      ratio: "4 / 5", width: 540,
+      slides: [{ src: "img/xwakacje.jpg", alt: "Post" }]
+    },
+    {
+      label: "Projekt nadruku na t-shirt",
+      note: "Projekt merchu fikcyjnego festiwalu strzeleckiego.",
+      ratio: "4 / 5", width: 540,
+      slides: [{ src: "img/mutzen1.png", alt: "Nadruk" }, { src: "img/mutzen2.png", alt: "Wizualizacja" }]
+    },
+    {
+      label: "Plakaty",
+      note: "Projekty plakatów.",
+      ratio: "5 / 7", width: 540,
+      slides: [{ src: "img/plakat1.png", alt: "Plakat 1" }, { src: "img/plakat2.png", alt: "Plakat 2" }, { src: "img/plakat3.png", alt: "Plakat 3" }]
+    },
+    {
+      label: "Akcja społeczna nectar",
+      note: "(Projekt na studia) Projekt reklamy na instagram oraz billboardu.",
+      ratio: "3 / 4", width: 540,
+      slides: [{ src: "img/beelboard3.png", alt: "Post IG" }, { src: "img/beelboard1.png", alt: "Billboard" }]
+    },
+    {
+      label: "Rolka",
+      note: "Przykładowa rolka z napisami z podcastu Zgrzyt",
+      ratio: "9 / 16", width: 540,
+      slides: [{ video: "img/zgrzytrolka.mp4", poster: "img/okladka.jpg", alt: "Opis" }]
+    },
+    
+  ];
+
+  const ARROW_L = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
+  const ARROW_R = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function buildWork(w) {
+    const total = w.slides.length;
+    const root = el("article", "work");
+    root.style.setProperty("--w", w.width + "px");
+    root.style.setProperty("--ratio", w.ratio);
+
+    const viewport = el("div", "viewport");
+    const track = el("div", "track");
+    track.tabIndex = total > 1 ? 0 : -1;
+    track.setAttribute("role", "group");
+    track.setAttribute("aria-roledescription", "karuzela");
+    track.setAttribute("aria-label", w.label);
+
+    w.slides.forEach((s, i) => {
+      const slide = el("div", "slide");
+      slide.setAttribute("aria-label", "Slajd " + (i + 1) + " z " + total);
+      if (s.video) {
+        const v = document.createElement("video");
+        v.src = s.video;
+        if (s.poster) v.poster = s.poster;
+        v.controls = true; v.playsInline = true; v.loop = true; v.muted = true; v.preload = "metadata";
+        v.setAttribute("aria-label", s.alt || w.label);
+        slide.appendChild(v);
+      } else if (s.src) {
+        const img = document.createElement("img");
+        img.src = s.src; img.alt = s.alt || w.label; img.loading = "lazy"; img.draggable = false;
+        slide.appendChild(img);
+      } else {
+        const ph = el("div", "ph");
+        ph.appendChild(el("b", null, s.alt || ("Slajd " + (i + 1))));
+        ph.appendChild(el("small", null, (s.kind === "video" ? "Tu wstaw wideo (.mp4), proporcje " : "Tu wstaw grafikę, proporcje ") + w.ratio.replace(" / ", ":")));
+        slide.appendChild(ph);
+      }
+      track.appendChild(slide);
+    });
+    viewport.appendChild(track);
+
+    let prev, next, dots = [], count;
+    function go(i) {
+      track.scrollTo({ left: i * track.clientWidth });
+    }
+    function sync() {
+      const i = Math.max(0, Math.min(total - 1, Math.round(track.scrollLeft / (track.clientWidth || 1))));
+      track.querySelectorAll("video").forEach(v => { if (v.closest(".slide") !== track.children[i]) v.pause(); });
+      dots.forEach((d, k) => d.setAttribute("aria-current", k === i ? "true" : "false"));
+      if (count) count.textContent = (i + 1) + " / " + total;
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === total - 1;
+    }
+    
+
+    if (total > 1) {
+      prev = el("button", "arrow prev"); prev.type = "button"; prev.innerHTML = ARROW_L; prev.setAttribute("aria-label", "Poprzedni slajd");
+      next = el("button", "arrow next"); next.type = "button"; next.innerHTML = ARROW_R; next.setAttribute("aria-label", "Następny slajd");
+      prev.addEventListener("click", () => go(Math.round(track.scrollLeft / track.clientWidth) - 1));
+      next.addEventListener("click", () => go(Math.round(track.scrollLeft / track.clientWidth) + 1));
+      viewport.append(prev, next);
+      track.addEventListener("scroll", sync, { passive: true });
+      window.addEventListener("resize", sync);
+    }
+    root.appendChild(viewport);
+
+    if (total > 1) {
+      const ctrl = el("div", "ctrl");
+      const dotWrap = el("div", "dots");
+      w.slides.forEach((_, i) => {
+        const d = el("button", "dot"); d.type = "button";
+        d.setAttribute("aria-label", "Przejdź do slajdu " + (i + 1));
+        d.addEventListener("click", () => go(i));
+        dots.push(d); dotWrap.appendChild(d);
+      });
+      count = el("span", "count");
+      ctrl.append(dotWrap, count);
+      root.appendChild(ctrl);
+      sync();
+    }
+
+    root.appendChild(el("p", "label", w.label));
+    if (w.note) root.appendChild(el("p", "note", w.note));
+    return root;
+  }
+
+  const feed = document.getElementById("feed");
+  WORKS.forEach(w => feed.appendChild(buildWork(w)));
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (!e.isIntersecting) e.target.pause(); });
+  }, { threshold: 0.25 });
+  document.querySelectorAll("video").forEach(v => io.observe(v));
+
+  document.getElementById("down").addEventListener("click", e => {
+    e.preventDefault();
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    feed.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+  });
+</script>
+
+</body></html>
